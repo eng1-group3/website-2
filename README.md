@@ -14,11 +14,3 @@ yetti-web/
 |   ├── favicon.ico <- The favicon of the project
 ├── .gitignore <- The git ignore file
 ```
-
-### Local Development
-
-```bash
-git clone https://github.com/yetti-eng/website.git
-cd website
-live-server # or any other html serving software
-```
