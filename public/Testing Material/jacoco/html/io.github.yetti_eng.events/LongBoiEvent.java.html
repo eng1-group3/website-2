@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LongBoiEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.events</a> &gt; <span class="el_source">LongBoiEvent.java</span></div><h1>LongBoiEvent.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.events;
+
+// All JavaDoc new
+
+import io.github.yetti_eng.EventCounter;
+import io.github.yetti_eng.entities.Item;
+import io.github.yetti_eng.entities.Player;
+import io.github.yetti_eng.screens.GameScreen;
+
+/**
+ * This class handles what happens when the player finds a Long Boi item.
+ */
+<span class="fc" id="L13">public class LongBoiEvent extends Event {</span>
+    /**
+     * This runs when the player picks up the item.
+     * It hides the item, plays a quack sound, and updates the score.
+     * If the player has found all 9 ducks, it unlocks the achievement.
+     *
+     * @param screen The current game screen
+     * @param player The player
+     * @param item   The item being picked up
+     * @return true
+     */
+    @Override
+    public boolean activate(GameScreen screen, Player player, Item item) {
+<span class="nc" id="L26">        final int TOTAL_LONG_BOIS = 9;</span>
+
+<span class="nc" id="L28">        EventCounter.incrementPositive();</span>
+        // ----- NEW CODE ------
+<span class="nc" id="L30">        EventCounter.incrementLongBoi();</span>
+        // ---------------------
+        // Remove the item from the map so it can't be picked up again
+<span class="nc" id="L33">        item.disable();</span>
+<span class="nc" id="L34">        item.hide();</span>
+
+        // Play the sound and show a text message
+<span class="nc" id="L37">        screen.getQuackSfx().play(screen.getGame().volume);</span>
+<span class="nc" id="L38">        screen.spawnInteractionMessage(&quot;Found Long Boi (+&quot; + getScoreModifier()[1] + &quot;)&quot;);</span>
+        // ---------- NEW CODE ------------
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (EventCounter.getLongBoiCollected() == TOTAL_LONG_BOIS) {</span>
+
+            // Unlock the achievement
+<span class="nc" id="L43">            screen.getGame().achievements.unlock(&quot;longboi_master&quot;);</span>
+
+            // Player feedback
+<span class="nc" id="L46">            screen.spawnLargeMessage(&quot;Achievement Unlocked!&quot;);</span>
+        }
+        // -------------------------------
+<span class="nc" id="L49">        return true;</span>
+    }
+    /**
+     * Gives 100 points to the player score.
+     */
+    @Override
+    public int[] getScoreModifier() {
+<span class="fc" id="L56">        return new int[] {0, 100};</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Timer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng</a> &gt; <span class="el_source">Timer.java</span></div><h1>Timer.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng;
+
+/**
+ * Handles real-time countdowns. Can be paused.
+ */
+<span class="fc" id="L6">public class Timer {</span>
+<span class="fc" id="L7">    private boolean active = false;</span>
+<span class="fc" id="L8">    private boolean finished = false;</span>
+    private int duration;
+    private int endTime;
+
+<span class="fc" id="L12">    public Timer(int duration) {</span>
+<span class="fc bfc" id="L13" title="All 2 branches covered.">        assert duration &gt;= 0 : &quot;The duration of a Timer cannot be negative.&quot;;</span>
+<span class="fc" id="L14">        this.duration = duration;</span>
+<span class="fc" id="L15">    }</span>
+
+    /**
+     * Plays the Timer (if it is not already playing or finished).
+     * While playing, it is active, and counts down its duration.
+     */
+    public void play() {
+<span class="pc bpc" id="L22" title="1 of 4 branches missed.">        if (finished || active) return;</span>
+<span class="fc" id="L23">        active = true;</span>
+<span class="fc" id="L24">        endTime = currentTimeSeconds() + duration;</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Pauses the Timer (if it is not already paused or finished).
+     * While paused, it is not active, and its duration is stored.
+     */
+    public void pause() {
+<span class="pc bpc" id="L32" title="1 of 4 branches missed.">        if (finished || !active) return;</span>
+<span class="fc" id="L33">        active = false;</span>
+<span class="fc" id="L34">        duration = endTime - currentTimeSeconds();</span>
+<span class="fc" id="L35">    }</span>
+
+    /**
+     * Finishes the Timer (if it is not already finished).
+     * While finished, it is not active, its duration is 0, and it cannot be played or paused.
+     */
+    public void finish() {
+<span class="nc bnc" id="L42" title="All 4 branches missed.">        if (finished || !active) return;</span>
+<span class="nc" id="L43">        active = false;</span>
+<span class="nc" id="L44">        finished = true;</span>
+<span class="nc" id="L45">        duration = 0;</span>
+<span class="nc" id="L46">    }</span>
+
+    /**
+     * @return true if the Timer is currently active; false otherwise.
+     */
+    public boolean isActive() {
+<span class="fc" id="L52">        return active;</span>
+    }
+
+    /**
+     * @return true if the Timer is currently finished; false otherwise.
+     */
+    public boolean isFinished() {
+<span class="fc" id="L59">        return finished;</span>
+    }
+
+    /**
+     * @return true if the Timer is currently active AND its full duration has passed; false otherwise.
+     */
+    public boolean hasElapsed() {
+<span class="pc bpc" id="L66" title="2 of 4 branches missed.">        return active &amp;&amp; currentTimeSeconds() &gt;= endTime;</span>
+    }
+
+    /**
+     * @return The remaining duration of the Timer in seconds.
+     */
+    public int getRemainingTime() {
+        // If timer is not active, use stored duration value
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (!active) return duration;</span>
+        // Otherwise calculate dynamically
+<span class="fc" id="L76">        return endTime - currentTimeSeconds();</span>
+    }
+
+    private int currentTimeSeconds() {
+<span class="fc" id="L80">        return Math.toIntExact(System.currentTimeMillis() / 1000);</span>
+    }
+
+    public String formatTimer(int seconds) {
+<span class="nc" id="L84">        return (seconds / 60) + &quot;:&quot; + String.format(&quot;%02d&quot;, seconds % 60);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

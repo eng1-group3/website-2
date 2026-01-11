@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AssignmentEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.events</a> &gt; <span class="el_source">AssignmentEvent.java</span></div><h1>AssignmentEvent.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.events;
+
+// WHOLE FILE NEW CODE
+
+import io.github.yetti_eng.entities.Item;
+import io.github.yetti_eng.entities.Player;
+import io.github.yetti_eng.screens.GameScreen;
+
+/**
+ * This event handles completing an assignment.
+ * You need to finish this assignment to unlock other stuff later in the game.
+ */
+<span class="fc" id="L13">public class AssignmentEvent extends Event{</span>
+    /**
+     * Runs when the player picks up the assignment.
+     * Hides the item and plays a paper sound to show it was completed.
+     *
+     * @param screen The current game screen
+     * @param player The player
+     * @param item The assignment item
+     * @return true since the assignment gets completed
+     */
+    @Override
+    public boolean activate(GameScreen screen, Player player, Item item) {
+<span class="nc" id="L25">        item.disable();</span>
+<span class="nc" id="L26">        item.hide();</span>
+<span class="nc" id="L27">        screen.getPaperSfx().play(screen.getGame().volume);</span>
+<span class="nc" id="L28">        screen.spawnInteractionMessage(&quot;Completed Assignment!&quot;);</span>
+<span class="nc" id="L29">        return true;</span>
+    }
+
+    /**
+     * No points for completing the assignment, but you need it for other events.
+     */
+    @Override
+    public int[] getScoreModifier() {
+<span class="fc" id="L37">        return new int[] {0,0};</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WaterSpillEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.events</a> &gt; <span class="el_source">WaterSpillEvent.java</span></div><h1>WaterSpillEvent.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.events;
+
+// All JavaDoc new
+
+import io.github.yetti_eng.EventCounter;
+import io.github.yetti_eng.entities.Item;
+import io.github.yetti_eng.entities.Player;
+import io.github.yetti_eng.screens.GameScreen;
+
+/**
+ * This event handles a hidden water spill on the floor.
+ * When the player steps on it, they trip and lose points.
+ */
+<span class="fc" id="L14">public class WaterSpillEvent</span>
+    extends Event {
+    /**
+     * Runs when the player steps on the water spill for the first time.
+     * Makes the spill visible, plays a slip sound, and takes away points.
+     *
+     * @param screen The current game screen
+     * @param player The player
+     * @param item The water spill item
+     * @return true if this is the first time stepping on it, false if already used
+     */
+    @Override
+    public boolean activate(GameScreen screen, Player player, Item item) {
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (!item.isUsed()){</span>
+<span class="nc" id="L28">            EventCounter.incrementHidden();</span>
+<span class="nc" id="L29">            item.show();</span>
+<span class="nc" id="L30">            screen.getSlipSfx().play(screen.getGame().volume);</span>
+<span class="nc" id="L31">            screen.spawnInteractionMessage(&quot;Tripped over in a water spill (&quot; + getScoreModifier()[1] + &quot;)&quot;);</span>
+<span class="nc" id="L32">            return true;</span>
+        }
+<span class="nc" id="L34">        return false;</span>
+    }
+
+    /**
+     * Takes away 50 points as a penalty for tripping.
+     */
+    @Override
+    public int[] getScoreModifier() {
+<span class="fc" id="L42">        return new int[] {1,50};</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

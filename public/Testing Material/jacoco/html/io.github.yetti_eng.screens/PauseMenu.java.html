@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PauseMenu.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.screens</a> &gt; <span class="el_source">PauseMenu.java</span></div><h1>PauseMenu.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.screens;
+
+// WHOLE FILE NEW CODE
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import io.github.yetti_eng.YettiGame;
+import io.github.yetti_eng.screens.GameScreen;
+import io.github.yetti_eng.screens.MenuScreen;
+
+/**
+ * This class represents the Pause Menu overlay.
+ * It is a table that sits on top of the game when the player presses ESC or press the button.
+ * It has a dark background and buttons to Resume, Restart, or Quit.
+ */
+public class PauseMenu extends Table {
+
+    /**
+     * Creates the pause menu user interface.
+     *
+     * @param game  The main game object (used to switch screens)
+     * @param gameScreen The current game screen (used to toggle pause off)
+     */
+<span class="nc" id="L33">    public PauseMenu(final YettiGame game, final GameScreen gameScreen) {</span>
+<span class="nc" id="L34">        setFillParent(true);</span>
+<span class="nc" id="L35">        setVisible(false); // Start hidden until the player pauses</span>
+
+        // Create a dark semi-transparent background
+        // This makes a 1x1 pixel image, sets it to black with 85% opacity,
+        // and stretches it to cover the whole menu.
+<span class="nc" id="L40">        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);</span>
+<span class="nc" id="L41">        pixmap.setColor(0, 0, 0, 0.85f);</span>
+<span class="nc" id="L42">        pixmap.fill();</span>
+<span class="nc" id="L43">        Drawable background = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));</span>
+<span class="nc" id="L44">        setBackground(background);</span>
+<span class="nc" id="L45">        pixmap.dispose();</span>
+
+        //Setup Buttons and Text
+<span class="nc" id="L48">        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle(null, null, null, game.font);</span>
+<span class="nc" id="L49">        Label.LabelStyle titleStyle = new Label.LabelStyle(game.font, Color.WHITE);</span>
+
+
+<span class="nc" id="L52">        Label pauseLabel = new Label(&quot;GAME PAUSED&quot;, titleStyle);</span>
+
+        // Resume Button: Unpauses the game
+<span class="nc" id="L55">        TextButton resumeBtn = new TextButton(&quot;Resume&quot;, buttonStyle);</span>
+<span class="nc" id="L56">        resumeBtn.addListener(new ChangeListener() {</span>
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+<span class="nc" id="L59">                gameScreen.togglePause();</span>
+<span class="nc" id="L60">            }</span>
+        });
+        // Restart Button: Starts a fresh GameScreen
+<span class="nc" id="L63">        TextButton restartBtn = new TextButton(&quot;Restart&quot;, buttonStyle);</span>
+<span class="nc" id="L64">        restartBtn.addListener(new ChangeListener() {</span>
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+<span class="nc" id="L67">                game.setScreen(new GameScreen(game));</span>
+<span class="nc" id="L68">                gameScreen.dispose();</span>
+<span class="nc" id="L69">            }</span>
+        });
+        // Main Menu Button: Exits to the main menu
+<span class="nc" id="L72">        TextButton menuBtn = new TextButton(&quot;Main Menu&quot;, buttonStyle);</span>
+<span class="nc" id="L73">        menuBtn.addListener(new ChangeListener() {</span>
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+<span class="nc" id="L76">                game.setScreen(new MenuScreen(game));</span>
+<span class="nc" id="L77">                gameScreen.dispose();</span>
+<span class="nc" id="L78">            }</span>
+        });
+
+        //Adds to the table layout
+<span class="nc" id="L82">        add(pauseLabel).padBottom(40).row();</span>
+<span class="nc" id="L83">        add(resumeBtn).padBottom(20).row();</span>
+<span class="nc" id="L84">        add(restartBtn).padBottom(20).row();</span>
+<span class="nc" id="L85">        add(menuBtn).padBottom(20).row();</span>
+<span class="nc" id="L86">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

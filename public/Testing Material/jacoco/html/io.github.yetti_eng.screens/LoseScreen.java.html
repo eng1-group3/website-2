@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoseScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.screens</a> &gt; <span class="el_source">LoseScreen.java</span></div><h1>LoseScreen.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.screens;
+
+/**
+ * All JavaDoc is new code.
+ *
+ * The original version did not use a table for the layout of the screen, so created and positioned
+ * each label using pixel positioning and then rendered each individually. The new code creates the
+ * same labels (with a couple additions) and adds them to a table for positioning, then
+ * the whole table is drawn using libGDX 'Stage'.
+ */
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.ScreenUtils;
+import io.github.yetti_eng.EventCounter;
+import io.github.yetti_eng.YettiGame;
+
+import static io.github.yetti_eng.YettiGame.scaled;
+
+/**
+ * The {@code LoseScreen} class represents the screen displayed when the player does not escape the maze.
+ * &lt;p&gt;
+ * It shows a message, the player's score, and an instruction for restarting the game.
+ * &lt;/p&gt;
+ *
+ * &lt;p&gt;This class implements LibGDX {@link Screen} interface, shows
+ * methods for managing a screen in a game.&lt;/p&gt;
+ */
+public class LoseScreen implements Screen {
+    private final YettiGame game;
+    private int score;
+
+    private final Stage stage;
+    private final Table table;
+
+    /**
+     * Sets up the stage and table for layout.
+     *
+     * @param game The main game object
+     */
+<span class="nc" id="L47">    public LoseScreen(final YettiGame game) {</span>
+<span class="nc" id="L48">        this.game = game;</span>
+<span class="nc" id="L49">        stage = new Stage(game.uiViewport, game.batch);</span>
+<span class="nc" id="L50">        table = new Table();</span>
+<span class="nc" id="L51">    }</span>
+
+    /**
+     * This runs when the screen is shown.
+     * It sets up the labels, including a message to the player, their score and an instruction to restart,
+     * and adds these to the table.
+     */
+    @Override
+    public void show() {
+<span class="nc" id="L60">        score = game.calculateFinalScore();</span>
+<span class="nc" id="L61">        table.setFillParent(true);</span>
+<span class="nc" id="L62">        stage.addActor(table);</span>
+        //table.setDebug(true);
+
+<span class="nc" id="L65">        Label.LabelStyle labelStyle = new Label.LabelStyle(game.font, Color.WHITE);</span>
+
+<span class="nc" id="L67">        Label titleLabel = new Label(&quot;You Lost! :(&quot;, labelStyle);</span>
+<span class="nc" id="L68">        Label scoreLabel = new Label(&quot;Score: &quot; + score, labelStyle);</span>
+        // ------ NEW CODE ---------
+<span class="nc" id="L70">        Label restartmessageLabel = new Label(&quot;press R to restart&quot;, labelStyle);</span>
+        // ------------------------
+
+<span class="nc" id="L73">        table.add(titleLabel).pad(10).row();</span>
+<span class="nc" id="L74">        table.add(scoreLabel).pad(10).row();</span>
+<span class="nc" id="L75">        table.add(restartmessageLabel).pad(10);</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Renders the losing screen and checks if button 'R' has been clicked to restart the game
+     * each frame.
+     *
+     * @param delta ??
+     */
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L86">        ScreenUtils.clear(0.8f, 0f, 0.15f, 0.4f);</span>
+
+        // --------- NEW CODE ---------
+        //Reset game variables and return to main menu on pressing R key
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {</span>
+<span class="nc" id="L91">            game.score = 0;      //  reset score</span>
+<span class="nc" id="L92">            EventCounter.reset();  // reset event counter</span>
+<span class="nc" id="L93">            game.setScreen(new MenuScreen(game)); //return to main menu</span>
+<span class="nc" id="L94">            dispose();</span>
+<span class="nc" id="L95">            return;</span>
+        }
+
+<span class="nc" id="L98">        stage.draw();</span>
+        // ---------------------------
+<span class="nc" id="L100">    }</span>
+
+    @Override
+    public void resize(int width, int height) {
+        // (Changed from 'viewport' to 'uiViewport')
+<span class="nc" id="L105">        game.uiViewport.update(width, height, true);</span>
+<span class="nc" id="L106">    }</span>
+
+    @Override
+<span class="nc" id="L109">    public void pause() {}</span>
+
+    @Override
+<span class="nc" id="L112">    public void resume() {}</span>
+
+    @Override
+<span class="nc" id="L115">    public void hide() {}</span>
+
+    @Override
+<span class="nc" id="L118">    public void dispose() {}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

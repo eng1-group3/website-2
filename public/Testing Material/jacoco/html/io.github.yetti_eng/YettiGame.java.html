@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>YettiGame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng</a> &gt; <span class="el_source">YettiGame.java</span></div><h1>YettiGame.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng;
+
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.yetti_eng.screens.MenuScreen;
+
+// Called &quot;Game&quot; in the architecture documentation; renamed to avoid clash with LibGDX class name
+/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+<span class="fc" id="L17">public class YettiGame extends Game {</span>
+    private static final float WORLD_SCALE = 80;
+
+    public SpriteBatch batch;
+    public FillViewport gameViewport;
+    // --------- NEW CODE ----------
+    public ScreenViewport uiViewport;
+    // ----------------------
+
+    private FreeTypeFontGenerator robotoGenerator;
+    public BitmapFont font;
+    public BitmapFont fontSmall;
+    public BitmapFont fontBordered;
+    public BitmapFont fontBorderedSmall;
+
+<span class="fc" id="L32">    public float volume = 1.0f;</span>
+    private boolean paused;
+    // ------ NEW CODE --------------
+    public Achievements achievements;
+    // ----------------------
+
+    public Timer timer;
+    public int score;
+
+    // (New JavaDoc)
+    /**
+     * Called when the game is first created.
+     * Initializes rendering resources, sets up the camera and viewport, then transitions
+     * to the main menu screen.
+     */
+    @Override
+    public void create() {
+<span class="nc" id="L49">        batch = new SpriteBatch();</span>
+        // ------- NEW CODE -------
+<span class="nc" id="L51">        achievements = new Achievements();</span>
+        // aspect ratio = width/height.
+<span class="nc" id="L53">        float aspectRatio = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();</span>
+<span class="nc" id="L54">        gameViewport = new FillViewport(30*aspectRatio,30);</span>
+
+<span class="nc" id="L56">        uiViewport = new ScreenViewport();</span>
+        // -----------------------
+
+<span class="nc" id="L59">        robotoGenerator = new FreeTypeFontGenerator(Gdx.files.internal(&quot;Roboto.ttf&quot;));</span>
+
+<span class="nc" id="L61">        var fontParameter = new FreeTypeFontParameter();</span>
+<span class="nc" id="L62">        fontParameter.size = 50;</span>
+<span class="nc" id="L63">        fontParameter.color = Color.WHITE.cpy();</span>
+<span class="nc" id="L64">        font = robotoGenerator.generateFont(fontParameter);</span>
+
+<span class="nc" id="L66">        fontParameter.size = 40;</span>
+<span class="nc" id="L67">        fontSmall = robotoGenerator.generateFont(fontParameter);</span>
+
+<span class="nc" id="L69">        fontParameter.size = 45;</span>
+<span class="nc" id="L70">        fontParameter.color = Color.BLACK.cpy();</span>
+<span class="nc" id="L71">        fontParameter.borderColor = Color.WHITE.cpy();</span>
+<span class="nc" id="L72">        fontParameter.borderWidth = 2;</span>
+<span class="nc" id="L73">        fontBorderedSmall = robotoGenerator.generateFont(fontParameter);</span>
+
+<span class="nc" id="L75">        fontParameter.size = 50;</span>
+<span class="nc" id="L76">        fontParameter.borderWidth = 4;</span>
+<span class="nc" id="L77">        fontBordered = robotoGenerator.generateFont(fontParameter);</span>
+
+<span class="nc" id="L79">        setScreen(new MenuScreen(this));</span>
+<span class="nc" id="L80">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="nc" id="L84">        super.dispose();</span>
+<span class="nc" id="L85">        batch.dispose();</span>
+<span class="nc" id="L86">        robotoGenerator.dispose();</span>
+<span class="nc" id="L87">        font.dispose();</span>
+<span class="nc" id="L88">        fontBordered.dispose();</span>
+<span class="nc" id="L89">        fontBorderedSmall.dispose();</span>
+        // ------- NEW CODE --------
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (achievements != null) {</span>
+<span class="nc" id="L92">            achievements.deleteFile();</span>
+        }
+        // ---------------------
+
+<span class="nc" id="L96">    }</span>
+
+    /**
+     * @param original The original size, given the dimensions of the game's 16x9 grid.
+     * @return The scaled size based on the program's WORLD_SCALE.
+     */
+    public static float scaled(float original) {
+<span class="fc" id="L103">        return original * WORLD_SCALE;</span>
+    }
+
+    /**
+     * @return true if the game is currently paused; false otherwise.
+     */
+    public boolean isPaused() {
+<span class="fc" id="L110">        return paused;</span>
+    }
+
+    @Override
+    public void pause() {
+<span class="fc" id="L115">        paused = true;</span>
+<span class="fc" id="L116">        super.pause();</span>
+<span class="fc" id="L117">    }</span>
+
+    @Override
+    public void resume() {
+<span class="fc" id="L121">        paused = false;</span>
+<span class="fc" id="L122">        super.resume();</span>
+<span class="fc" id="L123">    }</span>
+
+    /**
+     * @return The final score for the game.
+     */
+    public int calculateFinalScore() {
+<span class="fc" id="L129">        score += timer.getRemainingTime();</span>
+<span class="fc" id="L130">        return score;</span>
+    }
+
+    public BitmapFont getFontBordered() {
+<span class="nc" id="L134">        return fontBordered;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

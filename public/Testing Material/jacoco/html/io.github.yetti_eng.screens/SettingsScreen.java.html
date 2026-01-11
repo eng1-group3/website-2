@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SettingsScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.screens</a> &gt; <span class="el_source">SettingsScreen.java</span></div><h1>SettingsScreen.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.screens;
+
+/**
+ * All JavaDoc is new code.
+ *
+ * The original version did not use a table for the layout of the screen, so created and positioned
+ * each label using pixel positioning. The new code creates the same labels and adds them to a table
+ * for positioning, then the whole table is drawn using libGDX 'Stage'.
+ */
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.ScreenUtils;
+import io.github.yetti_eng.YettiGame;
+
+import static io.github.yetti_eng.YettiGame.scaled;
+
+/**
+ * The {@code SettingsScreen} class represents the screen displayed when the player pauses the game.
+ * &lt;p&gt;
+ * It shows a 'Resume' button, 'Restart' button and a &quot;Main Menu&quot; button that takes the player back to the main menu.
+ * &lt;/p&gt;
+ *
+ * &lt;p&gt;This class implements LibGDX {@link Screen} interface, shows
+ * methods for managing a screen in a game.&lt;/p&gt;
+ */
+public class SettingsScreen implements Screen {
+    private final YettiGame game;
+    private final Stage stage;
+    private final Table table;
+
+    private Slider volumeSlider;
+
+    private Texture sliderTexture;
+    private Texture knobTexture;
+
+    /**
+     * Sets up the stage and table for layout.
+     *
+     * @param game The main game object
+     */
+<span class="nc" id="L55">    public SettingsScreen(final YettiGame game) {</span>
+<span class="nc" id="L56">        this.game = game;</span>
+<span class="nc" id="L57">        stage = new Stage(game.uiViewport, game.batch);</span>
+<span class="nc" id="L58">        table = new Table();</span>
+<span class="nc" id="L59">    }</span>
+
+    /**
+     * This runs when the screen is shown.
+     * It sets up the input, creates the button and slider for volume,
+     * and adds these to the table.
+     */
+    @Override
+    public void show() {
+<span class="nc" id="L68">        Gdx.input.setInputProcessor(stage);</span>
+
+        // make table fill whole window
+<span class="nc" id="L71">        table.setFillParent(true);</span>
+        //table.setDebug(true);
+
+<span class="nc" id="L74">        stage.addActor(table);</span>
+
+<span class="nc" id="L76">        Label.LabelStyle labelStyle = new Label.LabelStyle(game.font, Color.WHITE);</span>
+<span class="nc" id="L77">        Label titleLabel = new Label(&quot;Settings&quot;, labelStyle);</span>
+<span class="nc" id="L78">        Label volumeLabel = new Label(&quot;Volume&quot;, labelStyle);</span>
+
+<span class="nc" id="L80">        sliderTexture = new Texture(&quot;ui/slider_background.png&quot;);</span>
+<span class="nc" id="L81">        knobTexture = new Texture(&quot;ui/slider_knob.png&quot;);</span>
+
+<span class="nc" id="L83">        volumeSlider = new Slider(0.0f, 1.0f, 0.01f, false,</span>
+            new Slider.SliderStyle(new TextureRegionDrawable(sliderTexture), new TextureRegionDrawable(knobTexture))
+        );
+<span class="nc" id="L86">        volumeSlider.setValue(game.volume);</span>
+<span class="nc" id="L87">        volumeSlider.addListener(new ChangeListener() {</span>
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+<span class="nc" id="L90">                game.volume = volumeSlider.getValue();</span>
+<span class="nc" id="L91">            }</span>
+        });
+
+<span class="nc" id="L94">        TextButton menuButton = new TextButton(&quot;Return to Menu&quot;, new TextButton.TextButtonStyle(null, null, null, game.font));</span>
+<span class="nc" id="L95">        menuButton.addListener(new InputListener() {</span>
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+<span class="nc" id="L98">                game.setScreen(new MenuScreen(game));</span>
+<span class="nc" id="L99">                dispose();</span>
+<span class="nc" id="L100">                return true;</span>
+            }
+        });
+
+<span class="nc" id="L104">        table.add(titleLabel).pad(20).row();</span>
+<span class="nc" id="L105">        table.add(volumeLabel).pad(10).row();</span>
+<span class="nc" id="L106">        table.add(volumeSlider).pad(10).fillX().row();</span>
+<span class="nc" id="L107">        table.add(menuButton).pad(10).row();</span>
+<span class="nc" id="L108">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L112">        ScreenUtils.clear(0.4f, 0.4f, 0.4f, 1f);</span>
+<span class="nc" id="L113">        stage.draw();</span>
+<span class="nc" id="L114">    }</span>
+
+    @Override
+    public void resize(int width, int height) {
+        // Edited line
+<span class="nc" id="L119">        game.uiViewport.update(width, height, true);</span>
+<span class="nc" id="L120">    }</span>
+
+    @Override
+<span class="nc" id="L123">    public void pause() {}</span>
+
+    @Override
+<span class="nc" id="L126">    public void resume() {}</span>
+
+    @Override
+<span class="nc" id="L129">    public void hide() {}</span>
+
+    @Override
+    public void dispose() {
+<span class="nc" id="L133">        stage.dispose();</span>
+<span class="nc" id="L134">        sliderTexture.dispose();</span>
+<span class="nc" id="L135">        knobTexture.dispose();</span>
+<span class="nc" id="L136">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

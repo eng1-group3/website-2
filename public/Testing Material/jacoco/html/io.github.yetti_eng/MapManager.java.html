@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng</a> &gt; <span class="el_source">MapManager.java</span></div><h1>MapManager.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng;
+
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
+
+/**
+ * Manages the tile map of the game.
+ * Responsible for it's loading, rendering and collision detection with the player.
+ */
+public class MapManager {
+    private TiledMap map;
+    private OrthogonalTiledMapRenderer renderer;
+    private final OrthographicCamera camera;
+    private TiledMapTileLayer collisionsLayer;
+
+    /**
+     * Constructor method which initialises the camera used to render the map to the screen.
+     *
+     * @param camera the game camera used to render the map to the screen.
+     */
+<span class="fc" id="L25">    public MapManager(OrthographicCamera camera) {</span>
+<span class="fc" id="L26">        this.camera = camera;</span>
+<span class="fc" id="L27">    }</span>
+
+    // Methods for unit testing using Mockito
+    public void setCollisionsLayer(TiledMapTileLayer newCollisionsLayer) {
+<span class="fc" id="L31">        collisionsLayer = newCollisionsLayer;</span>
+<span class="fc" id="L32">    }</span>
+
+    public void setRenderer(OrthogonalTiledMapRenderer newRenderer) {
+<span class="fc" id="L35">        renderer = newRenderer;</span>
+<span class="fc" id="L36">    }</span>
+
+    public OrthogonalTiledMapRenderer getRenderer() {
+<span class="fc" id="L39">        return renderer;</span>
+    }
+
+    public TiledMap getMap() {
+<span class="nc" id="L43">        return map;</span>
+    }
+    // End of unit test methods
+
+    /**
+     * Loads the tilemap and defines the collision layer.
+     * @param mapName internal path of the file of the map.
+     */
+    public void loadMap(String mapName) {
+<span class="nc" id="L52">        map = new TmxMapLoader().load(mapName);</span>
+<span class="nc" id="L53">        renderer = new OrthogonalTiledMapRenderer(map, 1 / 48f); //48x48 pixels per tile</span>
+        //&quot;collisions&quot; layer includes all tiles that cannot be walked on
+<span class="nc" id="L55">        collisionsLayer = (TiledMapTileLayer) map.getLayers().get(&quot;collisions&quot;);</span>
+<span class="nc" id="L56">    }</span>
+
+    public void render() {
+<span class="nc" id="L59">        renderer.setView(camera);</span>
+<span class="nc" id="L60">        renderer.render();</span>
+<span class="nc" id="L61">    }</span>
+
+    /**
+     * Checks if a world coordinate is unwalkable/ causes a collision with the player.
+     *
+     * @param posX given x position within the map.
+     * @param posY given y position within the map.
+     * @return true if position falls within a collision tile, false otherwise
+     */
+    public boolean isPositionInvalid(float posX, float posY) {
+<span class="fc" id="L71">        float tileWidth = collisionsLayer.getTileWidth() * renderer.getUnitScale();</span>
+<span class="fc" id="L72">        float tileHeight = collisionsLayer.getTileHeight() * renderer.getUnitScale();</span>
+        //finds tile coordinates of a map position
+<span class="fc" id="L74">        int x = (int)(posX / tileWidth);</span>
+<span class="fc" id="L75">        int y = (int)(posY / tileHeight);</span>
+        //if the cell at tile coords is null, position is valid
+<span class="fc" id="L77">        TiledMapTileLayer.Cell cell = collisionsLayer.getCell(x, y);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        return cell != null; //position is invalid if it falls in an unwalkable tile</span>
+    }
+
+    /**
+     * Checks if any corner of a rectangle object falls in an invalid position.
+     *
+     * @param rect represents the hitbox of the player
+     * @return true if any corner if in the collision layer
+     */
+    public boolean isRectInvalid(Rectangle rect) {
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        return isPositionInvalid(rect.x, rect.y) || // bottom left corner</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            isPositionInvalid(rect.x + rect.width, rect.y) || // bottom right</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            isPositionInvalid(rect.x, rect.y + rect.height) || // top left</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">            isPositionInvalid(rect.x + rect.width, rect.y + rect.height); // top right</span>
+    }
+
+    public float getMapWidth() {
+<span class="nc" id="L95">        int mapWidthInTiles = map.getProperties().get(&quot;width&quot;, Integer.class);</span>
+<span class="nc" id="L96">        int tilePixelWidth = map.getProperties().get(&quot;tilewidth&quot;, Integer.class);</span>
+
+<span class="nc" id="L98">        return (mapWidthInTiles * tilePixelWidth / 48f);</span>
+    }
+
+    public float getMapHeight() {
+<span class="nc" id="L102">        int mapHeightInTiles = map.getProperties().get(&quot;height&quot;, Integer.class);</span>
+<span class="nc" id="L103">        int tilePixelHeight = map.getProperties().get(&quot;tileheight&quot;, Integer.class);</span>
+
+<span class="nc" id="L105">        return (mapHeightInTiles * tilePixelHeight / 48f);</span>
+    }
+
+    public void dispose(){
+<span class="nc" id="L109">        renderer.dispose();</span>
+<span class="nc" id="L110">        map.dispose();</span>
+<span class="nc" id="L111">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

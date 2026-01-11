@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AchievementsScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.screens</a> &gt; <span class="el_source">AchievementsScreen.java</span></div><h1>AchievementsScreen.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.screens;
+
+// WHOLE FILE NEW CODE
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.ScreenUtils;
+import io.github.yetti_eng.Achievements;
+import io.github.yetti_eng.YettiGame;
+
+/**
+ * This screen displays the list of achievements to the player.
+ * It shows which ones are unlocked (in green) and which are still locked (in grey).
+ */
+public class AchievementsScreen implements Screen {
+    private final YettiGame game;
+    private final Stage stage;
+    private final Table table;
+    private final Achievements achievementsLogic;
+
+    // Styles for the text (Different colors for locked vs unlocked)
+    private Label.LabelStyle titleUnlockedStyle;
+    private Label.LabelStyle titleLockedStyle;
+    private Label.LabelStyle descUnlockedStyle;
+    private Label.LabelStyle descLockedStyle;
+
+    /**
+     * Sets up the stage and the table for layout.
+     *
+     * @param game The main game object
+     */
+<span class="nc" id="L39">    public AchievementsScreen(final YettiGame game) {</span>
+<span class="nc" id="L40">        this.game = game;</span>
+<span class="nc" id="L41">        stage = new Stage(game.uiViewport, game.batch);</span>
+<span class="nc" id="L42">        table = new Table();</span>
+<span class="nc" id="L43">        achievementsLogic = new Achievements();</span>
+<span class="nc" id="L44">    }</span>
+    /**
+     * This runs when the screen is shown.
+     * It sets up the input, creates the font styles (green for unlocked, grey for locked),
+     * and adds all the achievements to the table.
+     */
+    @Override
+    public void show() {
+<span class="nc" id="L52">        Gdx.input.setInputProcessor(stage);</span>
+
+<span class="nc" id="L54">        table.setFillParent(true);</span>
+<span class="nc" id="L55">        table.clear();</span>
+<span class="nc" id="L56">        stage.addActor(table);</span>
+        //table.setDebug(true);
+
+<span class="nc" id="L59">        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle(null, null, null, game.font);</span>
+<span class="nc" id="L60">        Label.LabelStyle headerStyle = new Label.LabelStyle(game.font, Color.WHITE);</span>
+
+        // Green for unlocked titles
+<span class="nc" id="L63">        titleUnlockedStyle = new Label.LabelStyle(game.font, Color.GREEN);</span>
+        // Gray for locked titles
+<span class="nc" id="L65">        titleLockedStyle = new Label.LabelStyle(game.font, Color.GRAY);</span>
+
+        // White for unlocked descriptions
+<span class="nc" id="L68">        descUnlockedStyle = new Label.LabelStyle(game.font, Color.WHITE);</span>
+        // Dark Gray for locked descriptions (visible but dimmed)
+<span class="nc" id="L70">        descLockedStyle = new Label.LabelStyle(game.font, Color.DARK_GRAY);</span>
+
+<span class="nc" id="L72">        Label titleLabel = new Label(&quot;Achievements&quot;, headerStyle);</span>
+<span class="nc" id="L73">        table.add(titleLabel).padBottom(30).row();</span>
+
+        // Add the specific achievements to the list
+<span class="nc" id="L76">        addAchievement(&quot;Path Sniffer&quot;, &quot;Find the secret path&quot;, &quot;path_sniffer&quot;);</span>
+<span class="nc" id="L77">        addAchievement(&quot;Longboi Master&quot;, &quot;Get all long bois&quot;, &quot;longboi_master&quot;);</span>
+<span class="nc" id="L78">        addAchievement(&quot;Ducktorate Degree&quot;, &quot;Get a score of 2000&quot;, &quot;ducktorate Degree&quot;);</span>
+<span class="nc" id="L79">        addAchievement(&quot;Turnitin Approved, Soul Freed&quot;, &quot;Give the lecturer the assignment&quot;, &quot;Turnitin Approved, Soul Freed&quot;);</span>
+        // Create the back button to return to the menu
+<span class="nc" id="L81">        TextButton backButton = new TextButton(&quot;Back&quot;, buttonStyle);</span>
+<span class="nc" id="L82">        backButton.addListener(new InputListener() {</span>
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+<span class="nc" id="L85">                game.setScreen(new MenuScreen(game));</span>
+<span class="nc" id="L86">                dispose();</span>
+<span class="nc" id="L87">                return true;</span>
+            }
+        });
+
+<span class="nc" id="L91">        table.add(backButton).padTop(30).center().row();</span>
+<span class="nc" id="L92">    }</span>
+    /**
+     * Method to add a single achievement to the screen.
+     * It checks if the achievement is unlocked and uses the correct color style.
+     *
+     * @param title The name of the achievement
+     * @param description What the player needs to do
+     * @param key The key used to check if it's unlocked in the preferences
+     */
+    private void addAchievement(String title, String description, String key) {
+<span class="nc" id="L102">        boolean isUnlocked = achievementsLogic.isUnlocked(key);</span>
+
+        Label titleLabel;
+        Label descLabel;
+
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (isUnlocked) {</span>
+            // It's unlocked, so use the Green styles
+<span class="nc" id="L109">            titleLabel = new Label(title + &quot; [UNLOCKED]&quot;, titleUnlockedStyle);</span>
+<span class="nc" id="L110">            descLabel = new Label(description, descUnlockedStyle);</span>
+        } else {
+<span class="nc" id="L112">            titleLabel = new Label(title + &quot; [LOCKED]&quot;, titleLockedStyle);</span>
+<span class="nc" id="L113">            descLabel = new Label(description, descLockedStyle);</span>
+        }
+
+<span class="nc" id="L116">        table.add(titleLabel).left().padTop(10).row();</span>
+<span class="nc" id="L117">        table.add(descLabel).left().padBottom(10).row();</span>
+<span class="nc" id="L118">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L122">        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);</span>
+<span class="nc" id="L123">        stage.draw();</span>
+<span class="nc" id="L124">    }</span>
+
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L128">        stage.getViewport().update(width, height, true);</span>
+<span class="nc" id="L129">    }</span>
+
+    @Override
+<span class="nc" id="L132">    public void pause() {}</span>
+
+    @Override
+<span class="nc" id="L135">    public void resume() {}</span>
+
+    @Override
+<span class="nc" id="L138">    public void hide() {}</span>
+
+    @Override
+    public void dispose() {
+<span class="nc" id="L142">        stage.dispose();</span>
+<span class="nc" id="L143">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

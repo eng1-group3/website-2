@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Leaderboard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng</a> &gt; <span class="el_source">Leaderboard.java</span></div><h1>Leaderboard.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng;
+
+// WHOLE FILE NEW CODE
+
+import java.io.FileWriter;
+import java.util.*;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+
+/**
+ * Manages the leaderboard, which is made from player scores that are stored in a text file.
+ * The leaderboard handles the highest scores up to a fixed size and assigns positions to each score in the leaderboard.
+ */
+public class Leaderboard {
+<span class="fc" id="L16">    private int leaderboardSize = 5;</span>
+<span class="fc" id="L17">    private List&lt;LeaderboardEntry&gt; topScores = new ArrayList();</span>
+    private String pathname;
+
+<span class="fc" id="L20">    public Leaderboard() {</span>
+<span class="fc" id="L21">        pathname = &quot;leaderboard.txt&quot;;</span>
+<span class="fc" id="L22">    }</span>
+
+<span class="fc" id="L24">    public Leaderboard(String pathString) {</span>
+<span class="fc" id="L25">        pathname = pathString;</span>
+<span class="fc" id="L26">    }</span>
+
+    /**
+     * Creates a {@link LeaderboardEntry} using the playerName and score and adds it to the leaderboard text file.
+     *
+     * @param playerName the name of the player to be added.
+     * @param score the player's score.
+     * @return true if the entry is added to the leaderboard; false otherwise.
+     */
+    public boolean addToLeaderboard(String playerName, int score) {
+<span class="fc" id="L36">        List&lt;String&gt; usernames = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L37">        File leaderboard = new File(pathname);</span>
+<span class="fc" id="L38">        try (Scanner scanner = new Scanner(leaderboard)) {</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            while (scanner.hasNextLine()) {</span>
+<span class="fc" id="L40">                String data = scanner.nextLine();</span>
+
+<span class="fc" id="L42">                String username = data.substring(0, data.indexOf(&quot; &quot;));</span>
+<span class="fc" id="L43">                usernames.add(username);</span>
+<span class="fc" id="L44">            }</span>
+        }
+<span class="nc" id="L46">        catch (FileNotFoundException e) {</span>
+<span class="nc" id="L47">            e.printStackTrace();</span>
+<span class="fc" id="L48">        }</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if(usernames.contains(playerName)) {</span>
+<span class="nc" id="L50">            return false;</span>
+        }
+<span class="fc" id="L52">        try (FileWriter myWriter = new FileWriter(pathname, true)) {</span>
+<span class="fc" id="L53">            myWriter.write(playerName + &quot; &quot; + score + &quot;\n&quot;);</span>
+<span class="nc" id="L54">        } catch (IOException e) {</span>
+<span class="nc" id="L55">            e.printStackTrace();</span>
+<span class="fc" id="L56">        }</span>
+<span class="fc" id="L57">        return true;</span>
+    }
+
+    /**
+     * Retrieves the highest scores in the leaderboard text file.
+     * Sorts the scores into descending order.
+     * Assigns ranking positions to each entry.
+     * @return a list of the leaderboard entries with the highest scores.
+     */
+    public List getTopScores() {
+<span class="fc" id="L67">        sortTopScores();</span>
+<span class="fc" id="L68">        setPositions();</span>
+<span class="fc" id="L69">        return topScores;</span>
+    }
+
+    /**
+     * Looks through the leaderboard text file and retrieves entries with the top scores.
+     * Sorts the retrieved entries into descending order.
+     */
+    private void sortTopScores(){
+<span class="fc" id="L77">        File leaderboard = new File(pathname);</span>
+<span class="fc" id="L78">        topScores.clear();</span>
+
+<span class="fc" id="L80">        try (Scanner scanner = new Scanner(leaderboard)) {</span>
+<span class="fc" id="L81">            LeaderboardEntry lowestScore =  new LeaderboardEntry();</span>
+
+            // Add leaderboardSize entries to the topScores arraylist
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            for (int i = 0; i &lt; leaderboardSize; i++) {</span>
+<span class="fc" id="L85">                topScores.add(new LeaderboardEntry(&quot;&quot;, Integer.MIN_VALUE));</span>
+            }
+
+            // Looks through each line of the leaderboard file
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            while (scanner.hasNextLine()) {</span>
+<span class="fc" id="L90">                String data = scanner.nextLine();</span>
+
+                // Lowest score is to the first entry of the arraylist
+                // Goes through each element of the top scores and if the score is lower than the current lowest score,
+                // it becomes the new lowest score
+<span class="fc" id="L95">                lowestScore = topScores.get(0);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                for (Object object : topScores) {</span>
+<span class="fc" id="L97">                    LeaderboardEntry entry = (LeaderboardEntry) object;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                    if (entry.getScore() &lt; lowestScore.getScore()) {</span>
+<span class="fc" id="L99">                        lowestScore = entry;</span>
+                    }
+<span class="fc" id="L101">                }</span>
+
+                // For current line in the leaderboard file, the first part is the name,
+                // and the second part is the score
+<span class="fc" id="L105">                String playerName = data.substring(0, data.indexOf(&quot; &quot;));</span>
+<span class="fc" id="L106">                int score = Integer.parseInt(data.substring(data.indexOf(&quot; &quot;) + 1));</span>
+<span class="fc" id="L107">                LeaderboardEntry leaderboardEntry = new LeaderboardEntry(playerName, score);</span>
+
+                // If the score of the current line is higher than the lowest score,
+                // the entry gets added to the topEntries list, replacing the lowest score
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">                if(leaderboardEntry.getScore() &gt; lowestScore.getScore()){</span>
+<span class="fc" id="L112">                    topScores.add(leaderboardEntry);</span>
+<span class="fc" id="L113">                    topScores.remove(lowestScore);</span>
+                }
+<span class="fc" id="L115">            }</span>
+
+            // Sorts topScores using comparators
+<span class="fc" id="L118">            Comparator myComparator = new SortLeaderboard();</span>
+<span class="fc" id="L119">            topScores.sort(myComparator);</span>
+
+<span class="fc" id="L121">            lowestScore = topScores.get(leaderboardSize - 1);</span>
+<span class="fc" id="L122">            try (Scanner scanner2 = new Scanner(leaderboard)) {</span>
+                // Looks through each line of the leaderboard.txt file
+<span class="fc bfc" id="L124" title="All 2 branches covered.">                while (scanner2.hasNextLine()) {</span>
+<span class="fc" id="L125">                    String data = scanner2.nextLine();</span>
+
+                    // Gets the playerName and score for the line of leaderboard file
+<span class="fc" id="L128">                    String playerName = data.substring(0, data.indexOf(&quot; &quot;));</span>
+<span class="fc" id="L129">                    int score = Integer.parseInt(data.substring(data.indexOf(&quot; &quot;) + 1));</span>
+<span class="fc" id="L130">                    LeaderboardEntry entry = new LeaderboardEntry(playerName, score);</span>
+
+                    // Adds entry if the score is tied with last place of the leaderboard
+<span class="pc bpc" id="L133" title="1 of 4 branches missed.">                    if (score == lowestScore.getScore() &amp;&amp; !topScores.contains(entry)) {</span>
+<span class="nc" id="L134">                        topScores.add(new LeaderboardEntry(playerName, score));</span>
+                    }
+<span class="fc" id="L136">                }</span>
+            }
+<span class="nc" id="L138">            catch (FileNotFoundException e) {</span>
+<span class="nc" id="L139">                e.printStackTrace();</span>
+<span class="fc" id="L140">            }</span>
+
+<span class="nc" id="L142">        } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L143">            System.out.println(&quot;An error occurred.&quot;);</span>
+<span class="nc" id="L144">            e.printStackTrace();</span>
+<span class="fc" id="L145">        }</span>
+
+<span class="fc" id="L147">    }</span>
+
+    /**
+     * Assigns a ranking to each entry in the {@code topscores} list.
+     * Entries with the same score are given the same ranking.
+     */
+    private void setPositions(){
+<span class="fc" id="L154">        int position = 1;</span>
+<span class="fc" id="L155">        int lastScore = -1;</span>
+
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        for (int i = 0; i &lt; topScores.size(); i++) {</span>
+<span class="fc" id="L158">            LeaderboardEntry entry = topScores.get(i);</span>
+
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (entry.getScore() != lastScore) {</span>
+<span class="fc" id="L161">                position = i + 1;</span>
+            }
+
+<span class="fc" id="L164">            entry.setPosition(position);</span>
+<span class="fc" id="L165">            lastScore = entry.getScore();</span>
+        }
+<span class="fc" id="L167">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

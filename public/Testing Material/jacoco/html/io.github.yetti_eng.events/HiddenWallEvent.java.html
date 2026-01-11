@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HiddenWallEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.events</a> &gt; <span class="el_source">HiddenWallEvent.java</span></div><h1>HiddenWallEvent.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.events;
+
+// WHOLE FILE NEW CODE
+
+import com.badlogic.gdx.graphics.Texture;
+import io.github.yetti_eng.EventCounter;
+import io.github.yetti_eng.entities.Item;
+import io.github.yetti_eng.entities.Player;
+import io.github.yetti_eng.screens.GameScreen;
+
+/**
+ * This event handles a secret wall that you can walk through.
+ * When you find it, the wall becomes passable and you get a big score bonus.
+ */
+public class HiddenWallEvent extends Event {
+    private final Texture passableTexture;
+
+    /**
+     * Creates a new hidden wall event.
+     *
+     * @param passableTexture The texture to show when the wall becomes passable
+     */
+<span class="fc" id="L23">    public HiddenWallEvent(Texture passableTexture) {</span>
+<span class="fc" id="L24">        this.passableTexture = passableTexture;</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Runs when the player discovers the hidden wall.
+     * Changes the wall texture and makes it so you can walk through it.
+     * Also unlocks an achievement for finding the secret path.
+     *
+     * @param screen The current game screen
+     * @param player The player
+     * @param item The hidden wall item
+     * @return true since the wall becomes passable
+     */
+    @Override
+    public boolean activate(GameScreen screen, Player player, Item item) {
+<span class="nc" id="L39">        EventCounter.incrementHidden();</span>
+<span class="nc" id="L40">        item.setTexture(passableTexture);</span>
+<span class="nc" id="L41">        item.setSolid(false);</span>
+<span class="nc" id="L42">        screen.getGame().achievements.unlock(&quot;path_sniffer&quot;);</span>
+<span class="nc" id="L43">        screen.spawnLargeMessage(&quot;Achievement Unlocked!&quot;);</span>
+<span class="nc" id="L44">        return true;</span>
+    }
+
+    /**
+     * Gives 200 points for finding the secret wall.
+     */
+    @Override
+    public int[] getScoreModifier() {
+<span class="fc" id="L52">        return new int[] {0, 200};</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventCounter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng</a> &gt; <span class="el_source">EventCounter.java</span></div><h1>EventCounter.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng;
+
+// (Code edited to keep track of long bois as well.)
+
+/**
+ * Tracks the number of hidden, positive and negative events so they can be
+ * displayed on the screen, as well as tracking how many long boi's have been collected.
+ * Counts for each can be incremented and retrieved through getter methods.
+ */
+<span class="nc" id="L10">public class EventCounter {</span>
+<span class="fc" id="L11">    private static int hidden = 0;</span>
+<span class="fc" id="L12">    private static int positive = 0;</span>
+<span class="fc" id="L13">    private static int negative = 0;</span>
+
+
+    public static void incrementHidden() {
+<span class="fc" id="L17">        hidden += 1;</span>
+<span class="fc" id="L18">    }</span>
+
+    public static void incrementPositive() {
+<span class="fc" id="L21">        positive += 1;</span>
+<span class="fc" id="L22">    }</span>
+
+    public static void incrementNegative() {
+<span class="fc" id="L25">        negative += 1;</span>
+<span class="fc" id="L26">    }</span>
+
+    public static int getHiddenCount() {
+<span class="fc" id="L29">        return hidden;</span>
+    }
+
+    public static int getPositiveCount() {
+<span class="fc" id="L33">        return positive;</span>
+    }
+
+    public static int getNegativeCount() {
+<span class="fc" id="L37">        return negative;</span>
+    }
+
+<span class="fc" id="L40">    private static int longBoiCollected = 0;</span>
+
+    public static void incrementLongBoi() {
+<span class="nc" id="L43">        longBoiCollected++;</span>
+<span class="nc" id="L44">    }</span>
+
+    public static int getLongBoiCollected() {
+<span class="nc" id="L47">        return longBoiCollected;</span>
+    }
+
+
+    public static void reset() {
+<span class="fc" id="L52">        hidden = 0;</span>
+<span class="fc" id="L53">        positive = 0;</span>
+<span class="fc" id="L54">        negative = 0;</span>
+<span class="fc" id="L55">        longBoiCollected = 0;</span>
+<span class="fc" id="L56">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

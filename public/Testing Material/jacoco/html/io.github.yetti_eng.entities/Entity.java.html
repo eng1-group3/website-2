@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Entity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.entities</a> &gt; <span class="el_source">Entity.java</span></div><h1>Entity.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.entities;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import io.github.yetti_eng.InputHelper;
+
+/**
+ * Entity handles setting movement of an object and performs collision and property checks.
+ * &lt;p&gt;
+ * Represents objects including the player, enemy and items (event triggers).
+ * Each entity has a movement, position, collision hitbox and property information on visibility,
+ * solidity and speed. &lt;/p&gt;
+ * &lt;p&gt;
+ * Called &quot;Sprite&quot; in the architecture documentation; renamed to avoid clash with LibGDX class name. &lt;/p&gt;
+ */
+public abstract class Entity extends Sprite {
+    private float speed;
+    private boolean solid;
+    private Vector2 movement;
+    private Rectangle hitbox;
+
+<span class="fc" id="L24">    private boolean visible = true;</span>
+<span class="fc" id="L25">    private boolean enabled = true;</span>
+
+    // Improved this JavaDoc
+    /**
+     * Constructor for a new Entity, initialises attributes.
+     * @param tex texture to render with.
+     * @param x initial x position.
+     * @param y initial y position.
+     * @param width width of the texture.
+     * @param height height of the texture.
+     * @param speed movement speed of the entity.
+     * @param solid whether object should cause collision with player
+     */
+    public Entity(Texture tex, float x, float y, float width, float height, float speed, boolean solid) {
+<span class="fc" id="L39">        super(tex);</span>
+
+        // Set this Entity's bounds and hitbox
+<span class="fc" id="L42">        setBounds(x, y, width, height);</span>
+<span class="fc" id="L43">        this.hitbox = new Rectangle(x, y, width, height);</span>
+<span class="fc" id="L44">        this.speed = speed;</span>
+<span class="fc" id="L45">        this.solid = solid;</span>
+<span class="fc" id="L46">        this.movement = new Vector2(0, 0);</span>
+<span class="fc" id="L47">    }</span>
+
+    public void resetMovement() {
+<span class="fc" id="L50">        movement.set(0, 0);</span>
+<span class="fc" id="L51">    }</span>
+
+    public void addMovement(float x, float y) {
+<span class="fc" id="L54">        movement.add(x, y);</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Convert this Entity's current queued movement into a unit vector
+     * (that is, ensure that this Entity moves exactly the distance of 1 tile).
+     */
+    public void normaliseMovement() {
+<span class="fc" id="L62">        movement = InputHelper.makeUnitVector(movement);</span>
+<span class="fc" id="L63">    }</span>
+
+    /**
+     * Performs this Entity's movement for the current frame.
+     * Uses the value of the movement field (which can be set with resetMovement(), addMovement(), etc.)
+     * @param delta The delta time this frame.
+     * @param speedWasPrecalculated true if the Entity's speed was already accounted for when
+     *                              calculating the value of the movement field.
+     */
+    public void doMove(float delta, boolean speedWasPrecalculated) {
+        // If speed was precalculated, don't account for it again
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        float speed = (speedWasPrecalculated ? 1 : getSpeedThisFrame(delta));</span>
+<span class="fc" id="L75">        translateX(movement.x * speed);</span>
+<span class="fc" id="L76">        translateY(movement.y * speed);</span>
+<span class="fc" id="L77">        hitbox.setPosition(getX(), getY());</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * Performs this Entity's movement for the current frame.
+     * Uses the value of the movement field (which can be set with resetMovement(), addMovement(), etc.)
+     * @param delta The delta time this frame.
+     */
+    public void doMove(float delta) {
+<span class="fc" id="L86">        doMove(delta, false);</span>
+<span class="fc" id="L87">    }</span>
+
+    public void setHitbox(Rectangle newHitbox) {
+<span class="fc" id="L90">        hitbox = newHitbox;</span>
+<span class="fc" id="L91">    }</span>
+
+    public Rectangle getHitbox() {
+<span class="fc" id="L94">        return hitbox;</span>
+    }
+
+    /**
+     * Checks whether this entity collides with another specified entity
+     * @param other other entity
+     * @return true if the two entities collide
+     */
+    public boolean collidedWith(Entity other) {
+        // If disabled, do not check for collisions
+<span class="pc bpc" id="L104" title="1 of 4 branches missed.">        return enabled &amp;&amp; hitbox.overlaps(other.getHitbox());</span>
+    }
+
+    public void show() {
+<span class="nc" id="L108">        visible = true; //shown on screen</span>
+<span class="nc" id="L109">    }</span>
+
+    public void hide() {
+<span class="nc" id="L112">        visible = false; //hidden from screen</span>
+<span class="nc" id="L113">    }</span>
+
+    public boolean isVisible() {
+<span class="nc" id="L116">        return visible;</span>
+    }
+
+    public void enable() {
+<span class="nc" id="L120">        enabled = true; //collision and logic updates apply</span>
+<span class="nc" id="L121">    }</span>
+
+    public void disable() {
+<span class="nc" id="L124">        enabled = false; //prevents collision and logic updates</span>
+<span class="nc" id="L125">    }</span>
+
+    public boolean isEnabled() {
+<span class="nc" id="L128">        return enabled;</span>
+    }
+
+    public float getSpeedThisFrame(float delta) {
+<span class="fc" id="L132">        return speed * delta;</span>
+    }
+
+    void setSolid(boolean solid) {
+<span class="nc" id="L136">        this.solid = solid;</span>
+<span class="nc" id="L137">    }</span>
+
+    public boolean isSolid() {
+<span class="fc" id="L140">        return solid;</span>
+    }
+
+    public Vector2 getCurrentPos() {
+<span class="fc" id="L144">        return new Vector2(getX(), getY());</span>
+    }
+
+    public float getSpeed() {
+<span class="fc" id="L148">        return speed;</span>
+    }
+
+    public void setSpeed(float speed) {
+<span class="nc" id="L152">        this.speed = speed;</span>
+<span class="nc" id="L153">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

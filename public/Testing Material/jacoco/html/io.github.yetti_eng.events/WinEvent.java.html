@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WinEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.events</a> &gt; <span class="el_source">WinEvent.java</span></div><h1>WinEvent.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.events;
+
+import io.github.yetti_eng.YettiGame;
+import io.github.yetti_eng.entities.Item;
+import io.github.yetti_eng.entities.Player;
+import io.github.yetti_eng.screens.GameScreen;
+import io.github.yetti_eng.screens.WinScreen;
+
+/**
+ * Event triggered when the player interacts with the exit.
+ * &lt;p&gt;
+ * The player can only win if the exit key card has been collected.
+ * If the key card is missing, a locked message is shown once.
+ */
+<span class="fc" id="L15">public class WinEvent extends Event {</span>
+
+    /** Tracks whether the player has collected the exit key card. */
+<span class="fc" id="L18">    public static boolean hasExitKeycard = false;</span>
+
+    /** Prevents the locked door message from appearing multiple times. */
+<span class="fc" id="L21">    private static boolean shownLockedMsg = false;</span>
+
+    /**
+     * Attempts to trigger the win condition.
+     * If the player has the key card, the game timer is paused and
+     * the win screen is displayed.
+     *
+     * @param screen the current game screen
+     * @param player the player interacting with the exit
+     * @param item   the exit item
+     * @return true if the win condition was triggered, false otherwise
+     */
+    @Override
+    public boolean activate(GameScreen screen, Player player, Item item) {
+
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (!hasExitKeycard) {</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            if (!shownLockedMsg) {</span>
+<span class="nc" id="L38">                screen.spawnInteractionMessage(&quot;Door locked. You need the key card.&quot;);</span>
+<span class="nc" id="L39">                shownLockedMsg = true;</span>
+            }
+<span class="nc" id="L41">            return false;</span>
+        }
+
+<span class="nc" id="L44">        YettiGame game = screen.getGame();</span>
+<span class="nc" id="L45">        game.timer.pause();</span>
+<span class="nc" id="L46">        game.setScreen(new WinScreen(game));</span>
+<span class="nc" id="L47">        screen.dispose();</span>
+<span class="nc" id="L48">        return true;</span>
+    }
+
+    /**
+     * No score change, winning the game is the reward.
+     */
+    @Override
+    public int[] getScoreModifier() {
+<span class="fc" id="L56">        return new int[] {0, 0};</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

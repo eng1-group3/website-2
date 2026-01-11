@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClosingDoorEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.events</a> &gt; <span class="el_source">ClosingDoorEvent.java</span></div><h1>ClosingDoorEvent.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.events;
+
+// WHOLE FILE NEW CODE
+
+import io.github.yetti_eng.EventCounter;
+import io.github.yetti_eng.entities.Item;
+import io.github.yetti_eng.entities.Player;
+import io.github.yetti_eng.screens.GameScreen;
+
+/**
+ * This event handles a door that closes behind you after a delay.
+ * When you walk through it, it starts a timer and then locks itself so you can't go back.
+ */
+public class ClosingDoorEvent extends Event {
+<span class="fc" id="L15">    private enum DoorState {</span>
+<span class="fc" id="L16">        OPEN,</span>
+<span class="fc" id="L17">        WAITING,</span>
+<span class="fc" id="L18">        CLOSED</span>
+    }
+
+<span class="fc" id="L21">    private DoorState state = DoorState.OPEN;</span>
+    private static final float CLOSE_DELAY = 2.0f;
+<span class="fc" id="L23">    private float timeSincePlayerPassed = 0f;</span>
+<span class="fc" id="L24">    private boolean playerPassedThrough = false;</span>
+
+    /**
+     * Creates a new closing door event.
+     *
+     * @param doorY The y position of the door
+     * @param doorHeight The height of the door
+     */
+<span class="fc" id="L32">    public ClosingDoorEvent(float doorY, float doorHeight) {</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * Runs when the player walks through the door.
+     * Starts the countdown timer that will close the door after 2 seconds.
+     *
+     * @param screen The current game screen
+     * @param player The player
+     * @param item The door item
+     * @return false since the door don't get used up immediately
+     */
+    @Override
+    public boolean activate(GameScreen screen, Player player, Item item) {
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">        if (state == DoorState.OPEN &amp;&amp; !playerPassedThrough) {</span>
+<span class="fc" id="L47">            playerPassedThrough = true;</span>
+<span class="fc" id="L48">            state = DoorState.WAITING;</span>
+<span class="fc" id="L49">            timeSincePlayerPassed = 0f;</span>
+        }
+<span class="fc" id="L51">        return false;</span>
+    }
+
+    /**
+     * Checks if enough time has passed to close the door.
+     * This gets called every frame to update the timer.
+     *
+     * @param screen The current game screen
+     * @param player The player
+     * @param item The door item
+     * @param delta Time since last frame
+     */
+    public void checkForAutoClose(GameScreen screen, Player player, Item item, float delta) {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (state == DoorState.WAITING) {</span>
+<span class="nc" id="L65">            timeSincePlayerPassed += delta;</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">            if (timeSincePlayerPassed &gt;= CLOSE_DELAY) {</span>
+<span class="nc" id="L67">                closeDoor(screen, item);</span>
+            }
+        }
+<span class="nc" id="L70">    }</span>
+
+    /**
+     * Closes the door and makes it solid again.
+     * Plays a sound and shows a message to let the player know.
+     *
+     * @param screen The current game screen
+     * @param item The door item
+     */
+    private void closeDoor(GameScreen screen, Item item) {
+<span class="nc" id="L80">        state = DoorState.CLOSED;</span>
+<span class="nc" id="L81">        EventCounter.incrementHidden();</span>
+<span class="nc" id="L82">        item.setSolid(true);</span>
+<span class="nc" id="L83">        item.setTexture(screen.getDoorTexture());</span>
+<span class="nc" id="L84">        item.enable();</span>
+<span class="nc" id="L85">        screen.getDoorSfx().play(screen.getGame().volume);</span>
+<span class="nc" id="L86">        screen.spawnInteractionMessage(&quot;The door closes behind you&quot;);</span>
+<span class="nc" id="L87">    }</span>
+
+    /**
+     * No score change for the door closing.
+     */
+    @Override
+    public int[] getScoreModifier() {
+<span class="fc" id="L94">        return new int[] {0,0};</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

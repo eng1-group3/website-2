@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Dean.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.entities</a> &gt; <span class="el_source">Dean.java</span></div><h1>Dean.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.entities;
+
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
+import io.github.yetti_eng.YettiGame;
+import io.github.yetti_eng.screens.LoseScreen;
+
+// This JavaDoc is new, everything else unchanged.
+/**
+ * The {@code Dean} class represents the 'dean' entity which is released as a negative event
+ * towards the end of the game.
+ * &lt;p&gt;
+ * It follows the player around the map, and upon collision, the player will lose the game.
+ * &lt;/p&gt;
+ * */
+public class Dean extends Entity {
+    // How fast the dean moves
+    private static final float DEAN_SPEED = 5f;
+
+    public Dean(Texture tex, float x, float y) {
+        // Dean should be larger than 1 tile to appear imposing (he can move through walls)
+<span class="fc" id="L22">        super(tex, x, y, 2f, 2.5f, DEAN_SPEED, false);</span>
+<span class="fc" id="L23">    }</span>
+
+    /**
+     * Run the logic for when the Dean gets the Player and the Player loses.
+     * @param game The current YettiGame object.
+     */
+    public boolean getsPlayer(final YettiGame game) {
+<span class="nc" id="L30">        Screen prevScreen = game.getScreen();</span>
+<span class="nc" id="L31">        game.setScreen(new LoseScreen(game));</span>
+<span class="nc" id="L32">        prevScreen.dispose();</span>
+<span class="nc" id="L33">        return true;</span>
+    }
+
+    /**
+     * Calculate this Dean's movement towards the Player.
+     * @param player The current Player object.
+     */
+    public void calculateMovement(final Player player) {
+<span class="fc" id="L41">        resetMovement();</span>
+        // Calculate vertical and horizontal distance to Player
+<span class="fc" id="L43">        float xDistance = player.getX() - this.getX();</span>
+<span class="fc" id="L44">        float yDistance = player.getY() - this.getY();</span>
+        // Set the Dean's movement to this distance
+<span class="fc" id="L46">        addMovement(xDistance, yDistance);</span>
+        // Normalise the movement vector so the dean only moves 1 tile
+<span class="fc" id="L48">        normaliseMovement();</span>
+<span class="fc" id="L49">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

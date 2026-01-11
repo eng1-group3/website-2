@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Achievements.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng</a> &gt; <span class="el_source">Achievements.java</span></div><h1>Achievements.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng;
+
+// WHOLE FILE NEW CODE
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+/**
+ * This class handles saving and loading achievements.
+ * It writes data to a simple text file so the game remembers what you unlocked
+ * even after you close it.
+ */
+public class Achievements {
+
+    private final FileHandle file;
+
+    /**
+     * Default constructor.
+     * Creates (or finds) a file named &quot;achievements.txt&quot; in the game folder.
+     */
+<span class="nc" id="L20">    public Achievements() {</span>
+<span class="nc" id="L21">        file = Gdx.files.local(&quot;achievements.txt&quot;);</span>
+<span class="nc" id="L22">    }</span>
+
+    /**
+     * Constructor used for testing.
+     * Allows a specific file path to pass.
+     *
+     * @param file The file handle to use
+     */
+<span class="fc" id="L30">    public Achievements(FileHandle file) {</span>
+<span class="fc" id="L31">        this.file = file;</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * Unlocks an achievement by writing it to the file.
+     * It first checks if it's already unlocked so it doesn't write the same thing twice.
+     *
+     * @param key The unique name of the achievement (e.g. &quot;longboi_master&quot;).
+     */
+    public void unlock(String key) {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (!isUnlocked(key)) {</span>
+<span class="fc" id="L42">            file.writeString(key + &quot;=true\n&quot;, true);</span>
+        }
+<span class="fc" id="L44">    }</span>
+
+    /**
+     * Checks if an achievement has been unlocked yet.
+     * It reads the text file and looks for the specific key.
+     *
+     * @param key The unique name of the achievement
+     * @return true if found, false otherwise
+     */
+    public boolean isUnlocked(String key) {
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if (!file.exists()) return false;</span>
+<span class="fc" id="L55">        return file.readString().contains(key + &quot;=true&quot;);</span>
+    }
+
+    /**
+     * Deletes the achievements file.
+     */
+    public void deleteFile() {
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (file.exists()) {</span>
+<span class="fc" id="L63">            file.delete();</span>
+        }
+<span class="fc" id="L65">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpeedUpEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.events</a> &gt; <span class="el_source">SpeedUpEvent.java</span></div><h1>SpeedUpEvent.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.events;
+
+// WHOLE FILE NEW CODE
+
+import io.github.yetti_eng.EventCounter;
+import io.github.yetti_eng.entities.Item;
+import io.github.yetti_eng.entities.Player;
+import io.github.yetti_eng.screens.GameScreen;
+import com.badlogic.gdx.utils.Timer;
+
+/**
+ * This event handles the speed boost item.
+ * When collected, it makes the player run much faster for a short time.
+ */
+<span class="fc" id="L15">public class SpeedUpEvent extends Event {</span>
+
+    private static final float BOOST_MULTIPLIER = 3f; // +300% speed go VOOOOOOOOMMMMMM!!!!!!
+    private static final float DURATION = 10f; // lasts 10 seconds
+
+    /**
+     * Activates the speed boost.
+     * It saves the current speed, triples it, plays a sound effect,
+     * and starts a timer to reset the speed back to normal later.
+     *
+     * @param screen The game screen
+     * @param player The player getting the boost
+     * @param item   The item being collected
+     * @return true
+     */
+    @Override
+    public boolean activate(GameScreen screen, Player player, Item item) {
+
+<span class="nc" id="L33">        float originalSpeed = player.getSpeed();</span>
+<span class="nc" id="L34">        float boostedSpeed = originalSpeed * BOOST_MULTIPLIER;</span>
+
+        // Apply boost
+<span class="nc" id="L37">        player.setSpeed(boostedSpeed);</span>
+
+        // Remove the item from the map so it can't be picked up again
+<span class="nc" id="L40">        item.disable();</span>
+<span class="nc" id="L41">        item.hide();</span>
+<span class="nc" id="L42">        EventCounter.incrementPositive(); //positive event recorded</span>
+        //play audio
+<span class="nc" id="L44">        screen.getspeedSfx().play(screen.getGame().volume);</span>
+
+        // reset the speed after the duration ends
+<span class="nc" id="L47">        Timer.schedule(new Timer.Task() {</span>
+            @Override
+            public void run() {
+<span class="nc" id="L50">                player.setSpeed(originalSpeed);</span>
+<span class="nc" id="L51">            }</span>
+        }, DURATION);
+
+<span class="nc" id="L54">        return true;</span>
+    }
+    /**
+     * Gives 200 points to the player score.
+     */
+    @Override
+    public int[] getScoreModifier() {
+<span class="fc" id="L61">        return new int[]  {0,200};</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

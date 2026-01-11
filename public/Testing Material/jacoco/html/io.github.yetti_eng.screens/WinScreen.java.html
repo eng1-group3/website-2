@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WinScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng.screens</a> &gt; <span class="el_source">WinScreen.java</span></div><h1>WinScreen.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng.screens;
+
+/**
+ * All JavaDoc is new code.
+ *
+ * The original version did not use a table for the layout of the screen, so created and positioned
+ * each label using pixel positioning. The new code creates the same labels (with an addition) and adds
+ * them to a table for positioning, then the whole table is drawn using libGDX 'Stage'.
+ */
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.ScreenUtils;
+import io.github.yetti_eng.EventCounter;
+import io.github.yetti_eng.Leaderboard;
+import io.github.yetti_eng.LeaderboardEntry;
+import io.github.yetti_eng.YettiGame;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+
+import java.util.List;
+
+/**
+ * The {@code WinScreen} class represents the screen displayed when the player successfully
+ * escapes the maze.
+ * &lt;p&gt;
+ * It shows a congratulatory message and score compared to the leaderboard.
+ * It also includes a &quot;Main Menu&quot; button that takes the player back to the main menu.
+ * &lt;/p&gt;
+ *
+ * &lt;p&gt;This class implements LibGDX {@link Screen} interface, shows
+ * methods for managing a screen in a game.&lt;/p&gt;
+ */
+public class WinScreen implements Screen {
+    private final YettiGame game;
+    // The player's final score.
+    private int score;
+    // The leaderboard of top scores.
+    private Leaderboard leaderboard;
+    // A list of the top scores.
+    private List topScores;
+    // A string which will contain player's username.
+<span class="pc" id="L49">    private String username = &quot;&quot;;</span>
+<span class="pc" id="L50">    private boolean typing = true;</span>
+<span class="pc" id="L51">    private boolean uniqueUsername = true;</span>
+
+    // The stage used to render the UI.
+    private final Stage stage;
+    // The table used for the layout of UI.
+    private final Table table;
+
+    /**
+     * Constructs a new {@code WinScreen} instance.
+     *
+     * @param game the main {@link YettiGame} game instance.
+     */
+<span class="nc" id="L63">    public WinScreen(final YettiGame game) {</span>
+<span class="nc" id="L64">        this.game = game;</span>
+<span class="nc" id="L65">        stage = new Stage(game.uiViewport, game.batch);</span>
+<span class="nc" id="L66">        table = new Table();</span>
+<span class="nc" id="L67">        score = game.calculateFinalScore();</span>
+        // ---- NEW CODE ------
+<span class="nc" id="L69">        this.leaderboard = new Leaderboard();</span>
+<span class="nc" id="L70">    }</span>
+
+<span class="fc" id="L72">    public WinScreen(final YettiGame game, boolean setUi) {</span>
+<span class="fc" id="L73">        this.game = game;</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (setUi) {</span>
+<span class="nc" id="L75">            stage = new Stage(game.uiViewport, game.batch);</span>
+<span class="nc" id="L76">            table = new Table();</span>
+        } else {
+<span class="fc" id="L78">            stage = null;</span>
+<span class="fc" id="L79">            table = null;</span>
+        }
+
+<span class="fc" id="L82">        score = game.calculateFinalScore();</span>
+<span class="fc" id="L83">        this.leaderboard = new Leaderboard();</span>
+<span class="fc" id="L84">    }</span>
+
+    // --------- NEW CODE -----------
+    public String getUsername() {
+<span class="fc" id="L88">        return username;</span>
+    }
+    // -----------------------------
+
+    /**
+     * This method is called when the screen is shown.
+     * It initialises elements of the UI and adds them to the table in correct layout.
+     */
+    @Override
+    public void show() {
+<span class="nc" id="L98">        table.clear();</span>
+<span class="nc" id="L99">        table.setFillParent(true);</span>
+<span class="nc" id="L100">        stage.addActor(table);</span>
+<span class="nc" id="L101">        Gdx.input.setInputProcessor(stage);</span>
+
+<span class="nc" id="L103">        Label.LabelStyle labelStyle = new Label.LabelStyle(game.font, Color.WHITE);</span>
+<span class="nc" id="L104">        TextButton.TextButtonStyle buttonStyle =</span>
+            new TextButton.TextButtonStyle(null, null, null, game.font);
+
+<span class="nc" id="L107">        Label titleLabel = new Label(&quot;You won :D&quot;, labelStyle);</span>
+<span class="nc" id="L108">        Label scoreLabel = new Label(&quot;Score: &quot; + score, labelStyle);</span>
+        // ---------- NEW CODE ------------
+<span class="nc" id="L110">        Label topScoresLabel = new Label(&quot;Top Scores:&quot;, labelStyle);</span>
+
+<span class="nc" id="L112">        table.add(titleLabel).padTop(10).row();</span>
+<span class="nc" id="L113">        table.add(scoreLabel).padTop(5).row();</span>
+<span class="nc" id="L114">        table.add(topScoresLabel).padTop(20).row();</span>
+
+<span class="nc" id="L116">        topScores = leaderboard.getTopScores();</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        for (Object obj : topScores) {</span>
+<span class="nc" id="L118">            LeaderboardEntry entry = (LeaderboardEntry) obj;</span>
+<span class="nc" id="L119">            Label lb = new Label(entry.getPosition() + &quot;)  &quot; + entry, labelStyle);</span>
+<span class="nc" id="L120">            table.add(lb).padTop(4).left().row();</span>
+<span class="nc" id="L121">        }</span>
+
+<span class="nc" id="L123">        TextButton menuBtn = new TextButton(&quot;Main Menu&quot;, buttonStyle);</span>
+<span class="nc" id="L124">        menuBtn.addListener(new ChangeListener() {</span>
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+<span class="nc" id="L127">                game.score = 0;</span>
+<span class="nc" id="L128">                EventCounter.reset();</span>
+<span class="nc" id="L129">                game.setScreen(new MenuScreen(game));</span>
+<span class="nc" id="L130">            }</span>
+        });
+
+<span class="nc" id="L133">        table.add(menuBtn).padTop(20).center().row();</span>
+        // ---------------------------------
+<span class="nc" id="L135">    }</span>
+
+    /**
+     * Renders the winning screen depending on if the player has entered their username or not.
+     *  If not, a different UI is shown than the table setup in 'show' method.
+     * @param delta time since last render.
+     */
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L144">        ScreenUtils.clear(0.15f, 0.4f, 0.2f, 1f);</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if(typing){</span>
+<span class="nc" id="L146">            game.batch.begin();</span>
+
+            // ----------- NEW CODE ----------
+<span class="nc" id="L149">            game.font.draw(game.batch, &quot;Enter your username:&quot;, 100, 500);</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            game.font.draw(game.batch, username + (typing ? &quot;|&quot; : &quot;&quot;), 100, 450);</span>
+
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            if(!uniqueUsername){</span>
+<span class="nc" id="L153">                game.font.draw(game.batch, &quot;Username is taken.&quot;, 100, 350);</span>
+            }
+
+<span class="nc" id="L156">            game.batch.end();</span>
+<span class="nc" id="L157">            handleTyping();</span>
+<span class="nc" id="L158">            return;</span>
+        }
+
+        //Reset game variables and return to main menu on pressing R key
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {</span>
+<span class="nc" id="L163">            resetGame();</span>
+<span class="nc" id="L164">            game.setScreen(new MenuScreen(game)); //return to main menu</span>
+<span class="nc" id="L165">            return;</span>
+        }
+<span class="nc" id="L167">        game.batch.begin();</span>
+<span class="nc" id="L168">        game.batch.end();</span>
+<span class="nc" id="L169">        stage.draw();</span>
+        // ------------------------------
+<span class="nc" id="L171">    }</span>
+
+    // -------------------- NEW CODE -------------------
+
+    /*
+     * Resets all game variables to their initial state.
+     */
+    void resetGame() {
+<span class="fc" id="L179">        game.score = 0;      //  reset score</span>
+<span class="fc" id="L180">        EventCounter.reset();  // reset event counter</span>
+<span class="fc" id="L181">    }</span>
+
+    /**
+     * ??
+     */
+    void handleTyping() {
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        for (int key = Input.Keys.A; key &lt;= Input.Keys.Z; key++) {</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            if (Gdx.input.isKeyJustPressed(key)) {</span>
+<span class="fc" id="L189">                username += Input.Keys.toString(key);</span>
+            }
+        }
+
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        for (int key = Input.Keys.NUM_0; key &lt;= Input.Keys.NUM_9; key++) {</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            if (Gdx.input.isKeyJustPressed(key)) {</span>
+<span class="fc" id="L195">                username += Input.Keys.toString(key);</span>
+            }
+        }
+
+<span class="fc bfc" id="L199" title="All 4 branches covered.">        if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE) &amp;&amp; !username.isEmpty()) {</span>
+<span class="fc" id="L200">            username = username.substring(0, username.length() - 1);</span>
+        }
+
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">            if(leaderboard.addToLeaderboard(username, score)){</span>
+<span class="nc" id="L205">                topScores = leaderboard.getTopScores();</span>
+<span class="nc" id="L206">                typing = false;</span>
+<span class="nc" id="L207">                this.show();</span>
+            } else{
+<span class="nc" id="L209">                username = &quot;&quot;;</span>
+<span class="nc" id="L210">                uniqueUsername = false;</span>
+            }
+        }
+<span class="fc" id="L213">    }</span>
+    // -------------------------------------------
+
+    /**
+     * Called when the screen is resized.
+     *
+     * @param width  the new width of the screen in pixels.
+     * @param height the new height of the screen in pixels.
+     */
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L224">        game.uiViewport.update(width, height, true);</span>
+<span class="nc" id="L225">    }</span>
+
+    @Override
+<span class="nc" id="L228">    public void pause() {}</span>
+
+    @Override
+<span class="nc" id="L231">    public void resume() {}</span>
+
+    @Override
+<span class="nc" id="L234">    public void hide() {}</span>
+
+    @Override
+<span class="nc" id="L237">    public void dispose() {}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

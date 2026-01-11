@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LeaderboardEntry.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.yetti_eng</a> &gt; <span class="el_source">LeaderboardEntry.java</span></div><h1>LeaderboardEntry.java</h1><pre class="source lang-java linenums">package io.github.yetti_eng;
+import java.util.Comparator;
+
+// WHOLE FILE NEW CODE
+
+/**
+ * Represents an entry in the leaderboard.
+ * Each entry consists of a name, score, and position.
+ */
+public class LeaderboardEntry {
+    private String playerName;
+    private int score;
+<span class="fc" id="L13">    private int position = -1;</span>
+
+    /**
+     * Creates a leaderboard entry with the given player name and their score.
+     * @param playerName name of the player.
+     * @param score player's score.
+     */
+<span class="fc" id="L20">    public LeaderboardEntry(String playerName, int score) {</span>
+<span class="fc" id="L21">        this.playerName = playerName;</span>
+<span class="fc" id="L22">        this.score = score;</span>
+<span class="fc" id="L23">    }</span>
+
+    /**
+     * Creates a default player.
+     * Entry has no name and the score is the minimum integer value.
+     */
+<span class="fc" id="L29">    public LeaderboardEntry() {</span>
+<span class="fc" id="L30">        this.playerName = null;</span>
+<span class="fc" id="L31">        this.score = Integer.MIN_VALUE;</span>
+<span class="fc" id="L32">    }</span>
+
+    public String getPlayerName() {
+<span class="fc" id="L35">        return playerName;</span>
+    }
+
+    public int getScore() {
+<span class="fc" id="L39">        return score;</span>
+    }
+
+    public void setScore(int score) {
+<span class="nc" id="L43">        this.score = score;</span>
+<span class="nc" id="L44">    }</span>
+
+    public int getPosition() {
+<span class="nc" id="L47">        return position;</span>
+    }
+
+    public void setPosition(int position) {
+<span class="fc" id="L51">        this.position = position;</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Creates a string representation of the name and score of the leaderboard entry.
+     * @return the leaderboard entry in string format.
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L60">        return this.score + &quot; &quot; + this.playerName;</span>
+    }
+
+    /**
+     * Compares the name and score of two leaderboard entries.
+     * @param obj the reference object with which to compare.
+     * @return true if the entries have the exact same name and score; false if otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+<span class="fc" id="L70">        LeaderboardEntry other = (LeaderboardEntry) obj;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (this == other) {</span>
+<span class="fc" id="L72">            return true;</span>
+        }
+
+<span class="fc bfc" id="L75" title="All 4 branches covered.">        if (this.getPlayerName().equals(other.getPlayerName()) &amp;&amp; this.getScore() == other.getScore()) {</span>
+<span class="fc" id="L76">            return true;</span>
+        }
+<span class="fc" id="L78">        return false;</span>
+    }
+}
+
+/**
+ * Comparator used to sort {@link LeaderboardEntry} objects by score in descending order.
+ */
+<span class="fc" id="L85">class SortLeaderboard implements Comparator&lt;LeaderboardEntry&gt; {</span>
+    /**
+     * Compares two leaderboard entries based on their score.
+     * @param o1 the first leaderboard entry
+     * @param o2 the second leaderboard entry
+     * @return negative value if {@code o2} has a higher score than {@code o1}, zero if scores are equal,
+     *      or positive value if otherwise.
+     */
+    @Override
+    public int compare(LeaderboardEntry o1, LeaderboardEntry o2) {
+<span class="fc" id="L95">        return Integer.compare(o2.getScore(), o1.getScore());</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
